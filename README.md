@@ -7,3 +7,9 @@ Now, I am working with data of citizen's mobility (bus, subway, taxi and etc.).
 
 In this part, I will organize traffic data in Seoul by year and month. All the csv files I upload include the number of users and location information.<br /><br />
 I also will upload Jupyter notebook file which I coded for making csv files and data visualization works.
+
+
+### 1. Subway
+
+Dataset 1 : The number of passengers on the subway by station (get on & off) <br />
+URL : [Seoul Open Data Plaform, https://data.seoul.go.kr/dataList/datasetView.do?infId=OA-12914&srvType=S&serviceKind=1&currentPageNo=1 ](#https://data.seoul.go.kr/dataList/datasetView.do?infId=OA-12914&srvType=S&serviceKind=1&currentPageNo=1)
