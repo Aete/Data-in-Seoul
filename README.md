@@ -12,4 +12,4 @@ I also will upload Jupyter notebook file which I coded for making csv files and 
 ### 1. Subway
 
 Dataset 1 : The number of passengers on the subway by station (get on & off) <br />
-URL : [Seoul Open Data Plaform, https://data.seoul.go.kr/dataList/datasetView.do?infId=OA-12914&srvType=S&serviceKind=1&currentPageNo=1 ](#https://data.seoul.go.kr/dataList/datasetView.do?infId=OA-12914&srvType=S&serviceKind=1&currentPageNo=1)
+URL : [Seoul Open Data Plaform, The number of passengers on the subway by station](https://data.seoul.go.kr/dataList/datasetView.do?infId=OA-12914&srvType=S&serviceKind=1&currentPageNo=1)
