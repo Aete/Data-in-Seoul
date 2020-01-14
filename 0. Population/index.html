@@ -4,14 +4,30 @@
     <meta charset="UTF-8">
     <title>Bubble Diagram about Seoul's population</title>
     <link rel="stylesheet" href="css/main.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
     <script src="js/libraries/d3.min.js"></script>
+    <script src="js/libraries/d3-force-reuse.min.js"></script>
 </head>
 <body>
-    <div id="control" >
+    <div id="control" style="width:300px; position:relative; z-index:0;" >
+        <div id="color" style="border:1px solid #212121; width:300px; border-radius: 25px; margin-top:20px;" onclick="update_color()">
+            <p style="text-align: center; font-family: Lato;">Color</p>
+        </div>
+        <div id="month">
+            <input type="range" name="timeSlider" id=timeSlider min="1" max="12" value="0" list="monthlist">
+            <datalist id="monthlist">
+            </datalist>
+        </div>
+        <div id="time" >
+                <input type="range" name="timeSlider" id=timeSlider min="0" max="24" value="0" list="timelist">
+                <datalist id="timelist">
+                </datalist>
+        </div>
     </div>
-    <div id="bubble" style="width: 600px; height:700px; background-color: #121212;">
+    <div id="bubble" style="width: 700px; height:800px; ">
 
     </div>
 </body>
 <script src = 'js/graph_bubble.js'>    </script>
+<script src = 'js/control.js'>    </script>
 </html>

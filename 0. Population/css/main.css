@@ -2,3 +2,31 @@ body{
     display:flex;
     flex-direction:row;
 }
+
+#color:hover{
+    background-color: #212121;
+    color:white;
+    cursor:pointer;
+}
+
+#month{
+
+    width:150px;
+
+    margin-top:20px;
+    font-family: Lato;
+    display:flex;
+    flex-direction:row;
+    justify-content: space-between;
+}
+
+#timeSlider{
+    margin-left:15px;
+    width:270px;
+
+}
+
+input[type=range]::-webkit-slider-label {
+
+}
+
