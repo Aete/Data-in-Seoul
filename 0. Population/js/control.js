@@ -1,5 +1,6 @@
 let timeScaler = d3.scaleLinear().range([15,600]).domain([0,24]);
 let monthScaler = d3.scaleLinear().range([15,600]).domain([0,12]);
+let pastSelect;
 function createButtons() {
     let colorButtons = d3.select('#color_button')
                             .append('svg')
@@ -255,16 +256,27 @@ function createTimeSlider() {
 let dragTime = d3.drag()
     .on('drag', function() {
         let xPosition = d3.event.x;
-
         if(xPosition>=15 && xPosition<610){
         let time = Math.round(timeScaler.invert(xPosition));
         xPosition = timeScaler(time);
         d3.select(this).attr("cx", xPosition);
+        console.log(pastSelect);
+        if(pastSelect !== undefined){
+            d3.select(pastSelect)
+                .transition()
+                .attr('r',2)
+                .attr('fill','#212121');
+        }
         if(time===0){
             time = 'avg'
         }
         else{
             time = time -1;
+            pastSelect = '#lineChart'+time;
+            d3.select(pastSelect)
+                .transition()
+                .attr('r',7)
+                .attr('fill','#F44336');
         }
 
         update_radius(store.living_pop,simulation,time);

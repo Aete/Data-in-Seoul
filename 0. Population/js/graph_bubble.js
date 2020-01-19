@@ -49,7 +49,6 @@ function draw_bubble() {
         return d
     });
 
-
     body.append('svg')
         .attr('id', 'container')
         .attr('width', width)
@@ -65,16 +64,25 @@ function draw_bubble() {
         return d
     });
 
+    // Create bubbles
     create_circle(living_pop);
+
+    // Create legend for colors
     create_legend();
+
+    // Add hover effect for some useful information
     hover_circle();
+
+    // Set start time and end time for animation (updating bubbles location)
     let startTime = Date.now();
     let endTime = startTime + simulationDurationInMs;
 
+    // Update bubbles location using d3.force
     simulation.nodes(living_pop).on('tick', function(){
         update_circle(endTime,simulation);
     });
 
+    // save updated data
     store.living_pop = living_pop;
 }
 
