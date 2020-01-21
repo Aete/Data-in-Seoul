@@ -262,21 +262,30 @@ let dragTime = d3.drag()
         d3.select(this).attr("cx", xPosition);
         console.log(pastSelect);
         if(pastSelect !== undefined){
-            d3.select(pastSelect)
+            d3.select('#lineChart'+pastSelect)
                 .transition()
                 .attr('r',2)
                 .attr('fill','#212121');
+
+            d3.select('#timeLabel'+pastSelect)
+                .style('display','none');
         }
         if(time===0){
             time = 'avg'
         }
         else{
             time = time -1;
-            pastSelect = '#lineChart'+time;
-            d3.select(pastSelect)
+
+
+            d3.select('#lineChart'+time)
                 .transition()
                 .attr('r',7)
                 .attr('fill','#F44336');
+
+            d3.select('#timeLabel'+time)
+                .style('display','block');
+
+            pastSelect = time;
         }
 
         update_radius(store.living_pop,simulation,time);
