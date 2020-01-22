@@ -100,6 +100,7 @@ function update_color(){
             });
         d3.select('#legend')
             .style('display','block');
+
         colormode = 'Color';
     }
     else{
@@ -109,6 +110,8 @@ function update_color(){
             .style('display','none');
         colormode = 'Monochrome';
     }
+    d3.select('.clicked')
+        .attr('fill','white');
 }
 
 function empty_buttons() {
