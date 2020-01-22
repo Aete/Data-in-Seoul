@@ -2,21 +2,25 @@ let chart_height = 230;
 let chart_width = 350;
 let time_range = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
 
-let maxValue = 11200000;
-let minValue = 10300000;
-let xScale =  d3.scaleLinear().domain([0,23]).range([20,340]);
-let yScale =  d3.scaleLinear().domain([minValue,maxValue]).range([chart_height,20]);
-
-
 d3.csv('living_population/population_avg.csv').then(timeSeriesSeoul);
 
 function timeSeriesSeoul(data){
+    let maxValue = d3.max(data, d=>d.total);
+    let minValue = d3.min(data, d=>d.total);
+    let gap = Math.round(maxValue - minValue);
+    let gapDigit = gap.toString().length;
+    let divider = 10**(gapDigit-1);
+    maxValue = Math.ceil(maxValue/divider)*divider;
+    minValue = (Math.floor(minValue/divider)-1)*divider;
 
+    let xScale =  d3.scaleLinear().domain([0,23]).range([20,340]);
+    let yScale =  d3.scaleLinear().domain([minValue,maxValue]).range([chart_height,20]);
     let container = d3.select('#seoul')
         .append('svg')
         .attr('width',chart_width)
         .attr('height',chart_height);
-    axis_making(container,chart_width,chart_height);
+
+    axis_making(container,maxValue, minValue, divider, xScale,yScale);
 
     let avg = data.pop();
     console.log(avg);
@@ -82,18 +86,18 @@ function timeSeriesSeoul(data){
 
 }
 
-function axis_making(target){
-
-        grid_making(target,maxValue,xScale,yScale);
-
+function axis_making(target,maxValue, minValue, divider, xScale,yScale){
+        grid_making(target,maxValue, minValue, divider, xScale,yScale);
 }
 
-function grid_making(target){
+function grid_making(target,maxValue, minValue, divider, xScale,yScale){
     let yLoc;
     let id = 0;
-    for(let t=10.3;t<=11.2;t=t+0.1){
+    d3.selectAll(".x_axis_grid").remove();
 
-        yLoc = yScale(t*1000000);
+    for(let t=minValue;t<=maxValue;t=t+divider){
+
+        yLoc = yScale(t);
         let grid = target.append("g")
                         .attr('class','x_axis_grid');
 
@@ -108,7 +112,7 @@ function grid_making(target){
 
             if(id%4===0){
             grid.append('text')
-                .text(parseFloat(Math.round(t*10)/10)+'M')
+                .text(parseFloat(Math.round(t)))
                 .attr('x',xScale(0))
                 .attr('y',yLoc-5)
                 .attr('fill','#969696')
@@ -117,4 +121,38 @@ function grid_making(target){
 
             id++
     }
+}
+
+function update_linechart(data) {
+    data = Object.values(data).slice(1, 25);
+
+    let maxValue = d3.max(data, d => +d);
+    let minValue = d3.min(data, d => +d);
+    let gap = Math.round(maxValue - minValue);
+    let gapDigit = gap.toString().length;
+    let divider = 10 ** (gapDigit - 1);
+    maxValue = Math.ceil(maxValue / divider) * divider;
+    minValue = (Math.floor(minValue / divider) - 1) * divider;
+
+
+    let xScale = d3.scaleLinear().domain([0, 23]).range([20, 340]);
+    let yScale = d3.scaleLinear().domain([minValue, maxValue]).range([chart_height, 20]);
+    let target = d3.select('#seoul').select('svg');
+
+    let data_ = {};
+    time_range.forEach((key, i) => data_[key] = data[i]);
+
+    let total_line = d3.line()
+        .x(d => xScale(+d.time))
+        .y(d => yScale(+d.total));
+
+    grid_making(target, maxValue, minValue, divider, xScale, yScale, gapDigit);
+
+    /*
+    d3.select('#lineChart')
+        .select('path')
+        .transition()
+        .datum(data)
+        .
+    */
 }

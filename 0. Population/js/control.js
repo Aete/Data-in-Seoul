@@ -46,7 +46,7 @@ function createButtons() {
         .style('font-size','15px');
 
 
-    let arrangeButtons = d3.select('#arrange_button')
+    let popTypeButtons = d3.select('#popType_button')
         .append('svg')
         .attr('height','60px')
         .attr('width','160px')
@@ -62,16 +62,16 @@ function createButtons() {
             d3.select(this).select('text').attr('fill','#212121');
         })
         .on('click',function(){
-            let colortype = d3.select(this).select('text').text();
-            if(colortype==='Color by Region'){
-                d3.select(this).select('text').text('Monochrome');
+            let poptype = d3.select(this).select('text').text();
+            if(poptype==='Living Population'){
+                d3.select(this).select('text').text('Census Population');
             }
             else{
-                d3.select(this).select('text').text('Color by Region');
+                d3.select(this).select('text').text('Living Population');
             }
         });
 
-    arrangeButtons.append('rect')
+    popTypeButtons.append('rect')
         .attr('fill','white')
         .attr('stroke', '#212121')
         .attr('x','5')
@@ -81,8 +81,8 @@ function createButtons() {
         .attr('width','150')
         .attr('height','50');
 
-    arrangeButtons.append('text')
-        .text('Entire city')
+    popTypeButtons.append('text')
+        .text('Living Population')
         .attr('x',80)
         .attr('y',35)
         .attr('fill','#212121')
@@ -253,44 +253,7 @@ function createTimeSlider() {
 
 }
 
-let dragTime = d3.drag()
-    .on('drag', function() {
-        let xPosition = d3.event.x;
-        if(xPosition>=15 && xPosition<610){
-        let time = Math.round(timeScaler.invert(xPosition));
-        xPosition = timeScaler(time);
-        d3.select(this).attr("cx", xPosition);
-        console.log(pastSelect);
-        if(pastSelect !== undefined){
-            d3.select('#lineChart'+pastSelect)
-                .transition()
-                .attr('r',2)
-                .attr('fill','#212121');
 
-            d3.select('#timeLabel'+pastSelect)
-                .style('display','none');
-        }
-        if(time===0){
-            time = 'avg'
-        }
-        else{
-            time = time -1;
-
-
-            d3.select('#lineChart'+time)
-                .transition()
-                .attr('r',7)
-                .attr('fill','#F44336');
-
-            d3.select('#timeLabel'+time)
-                .style('display','block');
-
-            pastSelect = time;
-        }
-
-        update_radius(store.living_pop,simulation,time);
-
-        }});
 
 function createMonthSelector(){
     let month_list = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];

@@ -70,8 +70,11 @@ function draw_bubble() {
     // Create legend for colors
     create_legend();
 
-    // Add hover effect for some useful information
+    // Add hover event for some useful information
     hover_circle();
+
+    // Add click event for some useful information
+    click_bubble();
 
     // Set start time and end time for animation (updating bubbles location)
     let startTime = Date.now();
@@ -116,8 +119,8 @@ function create_circle(data) {
         .attr('fill','#212121')
         .attr('fill-opacity','0.8')
         .attr('cx',d=>+d.x)
-        .attr('cy',d=>d.y);
-
+        .attr('cy',d=>+d.y)
+        .attr('id', d=>d.adm_cd2);
 }
 
 function update_circle(endTime,simulation){
@@ -203,118 +206,6 @@ function create_legend(){
         .attr('x',20)
         .attr('y',9)
         .style('font-size','13px');
-
-
 }
-
-function hover_circle(){
-    d3.selectAll(".nodes")
-        .on('mouseover',function(d,i){
-
-            if(d3.select(this).attr('fill')==='#212121'){
-                d3.select(this).attr('fill','#BDBDBD');
-            }
-            else{
-                d3.select(this).attr('stroke','#212121');
-                d3.select(this).attr('stroke-width','2px');
-            }
-            let total_population = d['total_'+d.target_time];
-            let male_ratio = Math.round((d['male_'+d.target_time] / total_population)*10000)/100;
-            let female_ratio =  Math.round((d['female_'+d.target_time] / total_population)*10000)/100;
-
-            let xCenter = +d3.select(this).attr('cx');
-            let yCenter = +d3.select(this).attr('cy');
-            let xLoc = null;
-            let yLoc = null;
-            let rad =  +d.Radius;
-
-            if(xCenter>300&&yCenter>300){
-                xLoc = xCenter-rad-130;
-                yLoc = yCenter-rad-100;
-            }
-            else if(xCenter>300&&yCenter<300){
-                xLoc = xCenter-rad-130;
-                yLoc = yCenter + rad;
-            }
-            else if(xCenter<300&&yCenter<300){
-                xLoc = xCenter+rad;
-                yLoc = yCenter+rad;
-            }
-            else{
-                xLoc = xCenter+rad;
-                yLoc = yCenter-rad-100;
-            }
-
-            let tooltip = d3.select('#container')
-                .append('g')
-                .attr('id','tooltip')
-                .attr('transform','translate('+xLoc+','+yLoc+')');
-
-            tooltip.append('rect')
-                .attr('width',130)
-                .attr('height',100)
-                .attr('fill','rgba(255,255,255,0.95)')
-                .attr('stroke','#212121');
-
-
-            tooltip.append('text')
-                .text(d['adm_cd2'])
-                .attr('fill','#212121')
-                .attr('x',5)
-                .attr('y',18)
-                .style('font-size','14px')
-                .style('font-weight','bold');
-            if(d.target_time==='avg'){
-                tooltip.append('text')
-                    .text('Time: Average')
-                    .attr('fill','#212121')
-                    .attr('x',5)
-                    .attr('y',37);
-            }
-            else{
-            tooltip.append('text')
-                .text('Time: '+ d.target_time)
-                .attr('fill','#212121')
-                .attr('x',5)
-                .attr('y',37);
-            }
-
-            tooltip.append('text')
-                .text('Total: ' + Math.round(total_population).toLocaleString())
-                .attr('fill','#212121')
-                .attr('x',5)
-                .attr('y',55);
-
-            tooltip.append('text')
-                .text('Female: '+female_ratio+'%')
-                .attr('fill','#212121')
-                .attr('x',5)
-                .attr('y',73);
-
-            tooltip.append('text')
-                .text('Male: '+male_ratio+'%')
-                .attr('fill','#212121')
-                .attr('x',5)
-                .attr('y',91);
-
-
-
-        });
-
-    d3.selectAll(".nodes")
-        .on('mouseout',function(d,i){
-            if(d3.select(this).attr('fill')==='#BDBDBD'){
-                d3.select(this).attr('fill','#212121');
-            }
-            else{
-                d3.select(this).attr('stroke','none');
-            }
-            d3.select('#tooltip').remove();
-        });
-
-
-}
-
-
 
 load_data_living_pop().then(draw_bubble);
