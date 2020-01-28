@@ -1,10 +1,11 @@
 let store = {};
 
-const pie = d3.pie()
-    .value(d=>d);
+let timeSetting='avg';
+let monthSetting = 'avg';
+
 let colormode = 'Monochrome';
 const simulationDurationInMs = 10000;
-let timeSetting='avg';
+
 
 let body = d3.select('#bubble');
 let width = 650;
@@ -33,7 +34,7 @@ let regionCategories = [
 
 function load_data_living_pop(){
     return Promise.all([
-        d3.csv('living_population/living_pop_12.csv')
+        d3.csv('living_population/living_pop_processed.csv')
     ]).then(dataset =>{
         store.living_pop = dataset[0];
         return store
@@ -44,7 +45,7 @@ function load_data_living_pop(){
 function draw_bubble() {
     // set the container svg, width and height
     let living_pop = store.living_pop.map(d=>{
-        d.Radius = d.total_avg/3400;
+        d.Radius = d['total_'+monthSetting+'_'+timeSetting]/3400;
         d.target_time='avg';
         return d
     });
@@ -162,9 +163,10 @@ function cScale(gu_code){
 
 
 
-function update_radius(data,simulation,time){
+function update_radius(data,simulation,time,month){
     timeSetting = time;
-    let target_ = 'total_'+time;
+    let target_ = 'total_'+month+'_'+time;
+    console.log(target_);
     let node = d3.select('#container').selectAll('.nodes');
     let nodes = data.map(d=>{
                         d.Radius = d[target_]/3400;

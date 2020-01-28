@@ -1,3 +1,4 @@
+let target_data;
 function hover_circle(){
     d3.selectAll(".nodes")
         .on('mouseover',function(d,i){
@@ -122,10 +123,10 @@ function click_bubble() {
                 d3.select(this).attr('stroke', '#212121');
                 d3.select(this).attr('stroke-width', '2px');
                 let id = d3.select(this).attr('id');
-                let target_data = store.living_pop.filter(d=>d.adm_cd2===id)[0];
+                target_data= store.living_pop.filter(d=>d.adm_cd2===id)[0];
+                console.log(target_data);
                 update_linechart(target_data);
             }
-
         });
 }
 
@@ -136,7 +137,6 @@ let dragTime = d3.drag()
             let time = Math.round(timeScaler.invert(xPosition));
             xPosition = timeScaler(time);
             d3.select(this).attr("cx", xPosition);
-            console.log(pastSelect);
             if(pastSelect !== undefined){
                 d3.select('#lineChart'+pastSelect)
                     .transition()
@@ -152,7 +152,6 @@ let dragTime = d3.drag()
             else{
                 time = time -1;
 
-
                 d3.select('#lineChart'+time)
                     .transition()
                     .attr('r',7)
@@ -163,7 +162,17 @@ let dragTime = d3.drag()
 
                 pastSelect = time;
             }
+            update_radius(store.living_pop,simulation,time,monthSetting);
+        }});
 
-            update_radius(store.living_pop,simulation,time);
-
+let dragMonth = d3.drag()
+    .on('drag', function() {
+        let xPosition = d3.event.x;
+        if(xPosition>=15 && xPosition<610){
+            let month = Math.round(monthScaler.invert(xPosition));
+            xPosition = monthScaler(month);
+            d3.select(this).attr("cx", xPosition);
+            monthSetting = month_object[month];
+            update_radius(store.living_pop,simulation,timeSetting,monthSetting);
+            update_linechart(target_data);
         }});

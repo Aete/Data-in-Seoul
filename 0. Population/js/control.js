@@ -1,6 +1,22 @@
 let timeScaler = d3.scaleLinear().range([15,600]).domain([0,24]);
 let monthScaler = d3.scaleLinear().range([15,600]).domain([0,12]);
 let pastSelect;
+
+let month_list = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+let month_object = {
+    0: 'avg',
+    1: 'Jan',
+    2: 'Feb',
+    3: 'Mar',
+    4: 'Apr',
+    5: 'May',
+    6: 'Jun',
+    7: 'Jul',
+    8: 'Aug',
+    9: 'Sept',
+    10: 'Oct',
+    11: 'Nov',
+    12: 'Dec'};
 function createButtons() {
     let colorButtons = d3.select('#color_button')
                             .append('svg')
@@ -177,7 +193,7 @@ function empty_buttons() {
 
 function bubbleMode(){
     mode = 'bubble';
-    update_radius(store.living_pop, simulation, timeSetting );
+    update_radius(store.living_pop, simulation, timeSetting,monthSetting);
 }
 
 function mapMode(){
@@ -259,22 +275,6 @@ function createTimeSlider() {
 
 
 function createMonthSelector(){
-    let month_list = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-    let month_object = {
-        0: 'avg',
-        1: 'Jan',
-        2: 'Feb',
-        3: 'Mar',
-        4: 'Apr',
-        5: 'May',
-        6: 'Jun',
-        7: 'Jul',
-        8: 'Aug',
-        9: 'Sept',
-        10: 'Oct',
-        11: 'Nov',
-        12: 'Dec'};
-
     let monthSlider = d3.select('#month').append('svg')
         .style('width','615px')
         .style('height','60px')
@@ -341,16 +341,7 @@ function createMonthSelector(){
 }
 
 
-let dragMonth = d3.drag()
-    .on('drag', function() {
-        let xPosition = d3.event.x;
 
-        if(xPosition>=15 && xPosition<610){
-            let month = Math.round(monthScaler.invert(xPosition));
-            xPosition = monthScaler(month);
-            d3.select(this).attr("cx", xPosition);
-
-        }});
 
 createButtons();
 empty_buttons();

@@ -151,11 +151,13 @@ function grid_making(target,maxValue, minValue, divider, xScale,yScale){
 }
 
 function update_linechart(data) {
-
-    let avg = data['total_avg'];
-    data = Object.values(data).slice(1, 25);
-    let maxValue = d3.max(data, d => +d);
-    let minValue = d3.min(data, d => +d);
+    let avg = data['total_'+monthSetting+'_avg'];
+    let target_data = [];
+    for(let i = 0;i<24;i++){
+        target_data.push(data['total_'+monthSetting+'_'+i]);
+    }
+    let maxValue = d3.max(target_data, d => +d);
+    let minValue = d3.min(target_data, d => +d);
     console.log(maxValue,minValue);
     let gap = Math.round(maxValue - minValue);
     let gapDigit = gap.toString().length;
@@ -174,11 +176,12 @@ function update_linechart(data) {
 
     time_range.forEach(function(value, i){
         let d = {'time':value,
-                'total':data[i]
+                'total':target_data[i]
         };
         processedData.push(d)
 
     });
+
     console.log(processedData);
 
     let total_line = d3.line()
@@ -213,15 +216,17 @@ function update_linechart(data) {
         .attr('y1',yScale(avg))
         .attr('y2',yScale(avg));
 
-    if(divider===100000){
+    if(divider>1000){
+        console.log(avg);
         d3.select('#avgText')
             .text('Avg: '+ parseFloat(Math.round(avg/(divider/10))/100)+'M')
             .attr('y',yScale(avg)-6);
 
     }
     else{
+        console.log(avg);
         d3.select('#avgText')
-            .text('Avg: '+ parseFloat(Math.round(avg/(divider/10))/10)+'K')
+            .text('Avg: '+ parseFloat(Math.round(avg/(divider/10)))+'K')
             .attr('y',yScale(avg)-6);
     }
 }
