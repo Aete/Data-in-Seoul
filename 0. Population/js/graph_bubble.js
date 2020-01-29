@@ -166,7 +166,6 @@ function cScale(gu_code){
 function update_radius(data,simulation,time,month){
     timeSetting = time;
     let target_ = 'total_'+month+'_'+time;
-    console.log(target_);
     let node = d3.select('#container').selectAll('.nodes');
     let nodes = data.map(d=>{
                         d.Radius = d[target_]/3400;

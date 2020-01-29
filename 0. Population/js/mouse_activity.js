@@ -1,4 +1,5 @@
 let target_data;
+let first_click = true;
 function hover_circle(){
     d3.selectAll(".nodes")
         .on('mouseover',function(d,i){
@@ -105,7 +106,6 @@ function hover_circle(){
 function click_bubble() {
     d3.selectAll('.nodes')
         .on('click', function (d, i) {
-
             d3.select('.clicked').attr('stroke', 'none');
 
             if (colormode === 'Monochrome') {
@@ -125,7 +125,13 @@ function click_bubble() {
                 let id = d3.select(this).attr('id');
                 target_data= store.living_pop.filter(d=>d.adm_cd2===id)[0];
                 console.log(target_data);
-                update_linechart(target_data);
+                if(first_click===true){
+                timeSeriesNeighborhood(target_data);
+                first_click=false;
+                }
+                else{
+                    update_linechart(target_data);
+                }
             }
         });
 }
