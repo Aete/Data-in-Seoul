@@ -7,9 +7,9 @@ function hover_circle(){
             d3.select(this).attr('stroke','#212121');
             d3.select(this).attr('stroke-width','2px');
 
-            let total_population = d['total_'+d.target_time];
-            let male_ratio = Math.round((d['male_'+d.target_time] / total_population)*10000)/100;
-            let female_ratio =  Math.round((d['female_'+d.target_time] / total_population)*10000)/100;
+            let total_population = d['total_'+monthSetting+'_'+timeSetting];
+            let male_ratio = Math.round((d['male_'+monthSetting+'_'+timeSetting] / total_population)*10000)/100;
+            let female_ratio =  Math.round((d['female_'+monthSetting+'_'+timeSetting] / total_population)*10000)/100;
 
             let xCenter = +d3.select(this).attr('cx');
             let yCenter = +d3.select(this).attr('cy');
@@ -144,12 +144,12 @@ let dragTime = d3.drag()
             xPosition = timeScaler(time);
             d3.select(this).attr("cx", xPosition);
             if(pastSelect !== undefined){
-                d3.select('#lineChart'+pastSelect)
+                d3.selectAll('.lineChart'+pastSelect)
                     .transition()
                     .attr('r',2)
                     .attr('fill','#212121');
 
-                d3.select('#timeLabel'+pastSelect)
+                d3.selectAll('.timeLabel'+pastSelect)
                     .style('display','none');
             }
             if(time===0){
@@ -158,12 +158,12 @@ let dragTime = d3.drag()
             else{
                 time = time -1;
 
-                d3.select('#lineChart'+time)
+                d3.selectAll('.lineChart'+time)
                     .transition()
                     .attr('r',7)
                     .attr('fill','#F44336');
 
-                d3.select('#timeLabel'+time)
+                d3.selectAll('.timeLabel'+time)
                     .style('display','block');
 
                 pastSelect = time;
@@ -180,5 +180,10 @@ let dragMonth = d3.drag()
             d3.select(this).attr("cx", xPosition);
             monthSetting = month_object[month];
             update_radius(store.living_pop,simulation,timeSetting,monthSetting);
-            update_linechart(target_data);
+
+            if(target_data!==undefined){
+                update_linechart(target_data);
+            }
+            let monthly_total = store.total.data.filter(d=>d['type']==='total' & d['month']===monthSetting);
+            update_linechart_total(monthly_total);
         }});

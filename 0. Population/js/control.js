@@ -17,6 +17,7 @@ let month_object = {
     10: 'Oct',
     11: 'Nov',
     12: 'Dec'};
+
 function createButtons() {
     let colorButtons = d3.select('#color_button')
                             .append('svg')
@@ -337,7 +338,6 @@ function createMonthSelector(){
         .attr('y',21)
         .style('font-size','13px')
         .attr('fill','#848484');
-
 }
 
 

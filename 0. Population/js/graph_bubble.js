@@ -6,7 +6,6 @@ let monthSetting = 'avg';
 let colormode = 'Monochrome';
 const simulationDurationInMs = 10000;
 
-
 let body = d3.select('#bubble');
 let width = 650;
 let height = 600;
@@ -17,24 +16,29 @@ let mode = 'bubble';
 let regionCategories = [
     {'id':0,
     'region': 'Central',
-    'colorCode':'#F44336'},
+    'colorCode':'#F44336',
+    'position':[325,300]},
     {'id':1,
     'region': 'North-East',
-    'colorCode':'#009688'},
+    'colorCode':'#009688',
+    'position':[525,125]},
     {'id':2,
     'region': 'North-West',
-    'colorCode':'#4CAF50'},
+    'colorCode':'#4CAF50',
+    'position':[125,125]},
     {'id':3,
     'region': 'South-East',
-    'colorCode':'#2196F3'},
+    'colorCode':'#2196F3',
+    'position':[525,475]},
     {'id':4,
     'region': 'South-West',
-    'colorCode':'#673AB7'}
+    'colorCode':'#673AB7',
+    'position':[125,475]}
 ];
 
 function load_data_living_pop(){
     return Promise.all([
-        d3.csv('living_population/living_pop_processed.csv')
+        d3.csv('living_population/living_pop_neighborhood.csv')
     ]).then(dataset =>{
         store.living_pop = dataset[0];
         return store

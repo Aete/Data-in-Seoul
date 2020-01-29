@@ -2,17 +2,23 @@ let chart_height = 230;
 let chart_width = 360;
 let time_range = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
 
-d3.csv('living_population/population_avg.csv').then(timeSeriesSeoul);
+d3.csv('living_population/living_population_total.csv').then(timeSeriesSeoul);
 
 function timeSeriesSeoul(data){
-    let maxValue = d3.max(data, d=>d.total);
-    let minValue = d3.min(data, d=>d.total);
+    store.total = {};
+    store.total.data = data;
+
+    data = data.filter(d=>d['type']==='total' & d['month']===monthSetting);
+    let maxValue = 11400000;
+    let minValue = 10400000;
     const scales = scalers(maxValue,minValue);
     const divider = scales.divider;
     const xScale = scales.xScale;
     const yScale = scales.yScale;
-    maxValue = Math.ceil(maxValue/divider)*divider;
-    minValue = Math.floor(minValue/divider)*divider;
+
+    store.total.xScale = xScale;
+    store.total.yScale = yScale;
+    store.total.divider = divider;
 
     let container = d3.select('#seoul')
         .append('svg')
@@ -21,7 +27,7 @@ function timeSeriesSeoul(data){
 
     grid_making(container,maxValue, minValue, divider, xScale,yScale,'Seoul');
 
-    let avg = data.pop()['total'];
+    let avg = data.pop()['pop'];
     chart_drawer(data,container, avg, divider, xScale,yScale,'Seoul');
 }
 
@@ -34,8 +40,8 @@ function timeSeriesNeighborhood(data){
         target_data.push(data['total_'+monthSetting+'_'+i]);
     }
 
-    let maxValue = d3.max(target_data, d => +d);
-    let minValue = d3.min(target_data, d => +d);
+    let maxValue = data['max'];
+    let minValue = data['min'];
     const scales = scalers(maxValue,minValue);
     const divider = scales.divider;
     const xScale = scales.xScale;
@@ -47,10 +53,9 @@ function timeSeriesNeighborhood(data){
 
     time_range.forEach(function(value, i){
         let d = {'time':value,
-            'total':target_data[i]
+            'pop':target_data[i]
         };
         processedData.push(d)
-
     });
 
     let container = d3.select('#neighborhood')
@@ -60,7 +65,12 @@ function timeSeriesNeighborhood(data){
 
     grid_making(container,maxValue, minValue, divider, xScale,yScale,'neighborhood');
 
-    chart_drawer(processedData,container, avg, divider, xScale,yScale,'neighborhood')
+    chart_drawer(processedData,container, avg, divider, xScale,yScale,'neighborhood');
+
+    d3.selectAll('.lineChart'+pastSelect)
+        .transition()
+        .attr('r',7)
+        .attr('fill','#F44336');
 }
 
 function scalers(maxValue,minValue){
@@ -86,8 +96,8 @@ function scalers(maxValue,minValue){
 
 function chart_drawer(data,container, avg, divider, xScale,yScale,type){
     let total_line = d3.line()
-        .x(d=>xScale(+d.time))
-        .y(d=>yScale(+d.total));
+        .x(d=>xScale(+d['time']))
+        .y(d=>yScale(+d['pop']));
 
     container.append('g')
         .attr('id','lineChart_'+type)
@@ -141,11 +151,10 @@ function chart_drawer(data,container, avg, divider, xScale,yScale,type){
         .data(data)
         .enter()
         .append('circle')
-        .attr('cx',d=>xScale(+d.time))
-        .attr('cy',d=>yScale(+d.total))
+        .attr('cx',d=>xScale(+d['time']))
+        .attr('cy',d=>yScale(+d['pop']))
         .attr('r',2)
-        .attr('id',d=>'lineChart'+d.time)
-        .attr('class','lineChartCircle_'+type);
+        .attr('class',d=>'lineChart'+d['time']+' '+'lineChartCircle_'+type);
 
     container.select('#circleLabel')
         .selectAll('g')
@@ -153,15 +162,14 @@ function chart_drawer(data,container, avg, divider, xScale,yScale,type){
         .enter()
         .append('text')
         .text(d=>d.time)
-        .attr('class','timetext_'+type)
-        .attr('id',d=>'timeLabel'+d.time)
-        .attr('x',d=>xScale(+d.time))
+        .attr('class',d=>'timeLabel'+d['time'])
+        .attr('x',d=>xScale(+d['time']))
         .attr('y',function(d){
             if(d.total>avg){
-                return yScale(+d.total)-14;
+                return yScale(+d['pop'])-14;
             }
             else{
-                return yScale(+d.total)+22
+                return yScale(+d['pop'])+22
             }
         })
         .style('font-size','14px')
@@ -181,7 +189,7 @@ function grid_making(target,maxValue, minValue, divider, xScale,yScale,type){
         step = divider/2;
     }
 
-    for(let t=minValue;t<=maxValue;t=t+step){
+    for(let t=minValue;t<maxValue;t=t+step){
 
         yLoc = yScale(t);
         let grid = target.append("g")
@@ -197,7 +205,7 @@ function grid_making(target,maxValue, minValue, divider, xScale,yScale,type){
                 .attr('stroke-dasharray',"7,3");
 
         if(divider===100000){
-            if(id%2===0){
+            if(id%2===1){
                 grid.append('text')
                     .text(parseFloat(Math.round(t/divider)/10)+'M')
                     .attr('x',305)
@@ -207,7 +215,7 @@ function grid_making(target,maxValue, minValue, divider, xScale,yScale,type){
             }
         }
         else if(divider===10000){
-            if(id%2===0){
+            if(id%2===1){
                 grid.append('text')
                     .text(parseFloat(Math.round(t/divider)/100)+'M')
                     .attr('x',305)
@@ -216,7 +224,7 @@ function grid_making(target,maxValue, minValue, divider, xScale,yScale,type){
                     .style('font-size','10px');  }
         }
         else{
-            if(id%2===0){
+            if(id%2===1){
             grid.append('text')
                 .text(parseFloat(Math.round(t/divider))+'K')
                 .attr('x',305)
@@ -225,7 +233,6 @@ function grid_making(target,maxValue, minValue, divider, xScale,yScale,type){
                 .style('font-size','10px');
             }
         }
-
             id++
     }
 }
@@ -238,8 +245,8 @@ function update_linechart(data) {
         target_data.push(data['total_'+monthSetting+'_'+i]);
     }
 
-    let maxValue = d3.max(target_data, d => +d);
-    let minValue = d3.min(target_data, d => +d);
+    let maxValue = data['max'];
+    let minValue = data['min'];
 
     const scales = scalers(maxValue,minValue);
     const divider = scales.divider;
@@ -253,7 +260,7 @@ function update_linechart(data) {
 
     time_range.forEach(function(value, i){
         let d = {'time':value,
-                'total':target_data[i]
+                'pop':target_data[i]
         };
         processedData.push(d)
 
@@ -261,7 +268,7 @@ function update_linechart(data) {
 
     let total_line = d3.line()
         .x(d => xScale(+d.time))
-        .y(d => yScale(+d.total));
+        .y(d => yScale(+d['pop']));
 
     let target = d3.select('#neighborhood').select('svg');
     grid_making(target, maxValue, minValue, divider, xScale, yScale,'neighborhood');
@@ -278,13 +285,13 @@ function update_linechart(data) {
     d3.selectAll('.lineChartCircle_neighborhood')
         .data(processedData)
         .transition()
-        .attr('cx',d=>xScale(+d.time))
-        .attr('cy',d=>yScale(+d.total));
+        .attr('cx',d=>xScale(+d['time']))
+        .attr('cy',d=>yScale(+d['pop']));
 
     d3.selectAll('.timetext_neighborhood')
         .data(processedData)
         .transition()
-        .attr('y',d=>yScale(+d.total)-12);
+        .attr('y',d=>yScale(+d['pop'])-12);
 
     d3.select('#avgLine_neighborhood')
         .transition()
@@ -308,6 +315,56 @@ function update_linechart(data) {
             .text('Avg: '+ parseFloat(Math.round(avg/(divider/10))/10)+'K')
             .attr('y',yScale(avg)-6);
     }
+}
+
+function update_linechart_total(data){
+    const avg = data.pop()['pop'];
+    console.log(avg);
+    const xScale = store.total.xScale;
+    const yScale = store.total.yScale;
+    const divider = store.total.divider;
+
+    let total_line = d3.line()
+        .x(d => xScale(+d.time))
+        .y(d => yScale(+d['pop']));
+
+    d3.select('#lineChart_Seoul')
+        .select('path')
+        .datum(data)
+        .transition()
+        .attr("d", total_line);
+
+    d3.selectAll('.lineChartCircle_Seoul')
+        .data(data)
+        .transition()
+        .attr('cx',d=>xScale(+d['time']))
+        .attr('cy',d=>yScale(+d['pop']));
+
+    d3.select('#avgLine_Seoul')
+        .transition()
+        .attr('y1',yScale(avg))
+        .attr('y2',yScale(avg));
+
+    if(divider===100000){
+        d3.select('#avgText_Seoul')
+            .text('Avg: '+ parseFloat(Math.round(avg/(divider/10))/100)+'M')
+            .attr('y',yScale(avg)-6);
+    }
+
+    else if(divider===10000){
+        d3.select('#avgText_Seoul')
+            .text('Avg: '+ parseFloat(Math.round(avg/(divider/10))/1000)+'M')
+            .attr('y',yScale(avg)-6);
+    }
+
+    else{
+        d3.select('#avgText_Seoul')
+            .text('Avg: '+ parseFloat(Math.round(avg/(divider/10))/10)+'K')
+            .attr('y',yScale(avg)-6);
+    }
+    console.log(pastSelect);
+
+
 }
 
 
