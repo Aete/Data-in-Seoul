@@ -156,16 +156,16 @@ function chart_drawer(data,container, avg, divider, xScale,yScale,type){
         .attr('r',2)
         .attr('class',d=>'lineChart'+d['time']+' '+'lineChartCircle_'+type);
 
-    container.select('#circleLabel')
-        .selectAll('g')
+    container.select('#circleLabel_'+type)
+        .selectAll('text')
         .data(data)
         .enter()
         .append('text')
         .text(d=>d.time)
-        .attr('class',d=>'timeLabel'+d['time'])
+        .attr('class',d=>'timeLabel'+d['time']+' '+'timeLabel_'+type)
         .attr('x',d=>xScale(+d['time']))
         .attr('y',function(d){
-            if(d.total>avg){
+            if(d['pop']>avg){
                 return yScale(+d['pop'])-14;
             }
             else{
@@ -174,7 +174,11 @@ function chart_drawer(data,container, avg, divider, xScale,yScale,type){
         })
         .style('font-size','14px')
         .style('font-weight','bold')
-        .style('display','none')
+        .style('display','none');
+
+    if((type==='neighborhood')&&(pastSelect!==undefined)){
+        d3.selectAll('.timeLabel'+pastSelect).style('display','block');
+    }
 }
 
 
@@ -202,7 +206,7 @@ function grid_making(target,maxValue, minValue, divider, xScale,yScale,type){
                 .attr('y2',yLoc)
                 .attr('stroke','#AAAAAA')
                 .attr('stroke-width',0.5)
-                .attr('stroke-dasharray',"7,3");
+                .attr('stroke-dasharray',"3,3");
 
         if(divider===100000){
             if(id%2===1){
@@ -288,10 +292,17 @@ function update_linechart(data) {
         .attr('cx',d=>xScale(+d['time']))
         .attr('cy',d=>yScale(+d['pop']));
 
-    d3.selectAll('.timetext_neighborhood')
+    d3.selectAll('.timeLabel_neighborhood')
         .data(processedData)
         .transition()
-        .attr('y',d=>yScale(+d['pop'])-12);
+        .attr('y',function(d){
+            if(d['pop']>avg){
+                return yScale(+d['pop'])-14;
+            }
+            else{
+                return yScale(+d['pop'])+22
+            }
+        });
 
     d3.select('#avgLine_neighborhood')
         .transition()
@@ -340,6 +351,19 @@ function update_linechart_total(data){
         .attr('cx',d=>xScale(+d['time']))
         .attr('cy',d=>yScale(+d['pop']));
 
+    d3.selectAll('.timeLabel_Seoul')
+        .data(data)
+        .transition()
+        .attr('y',function(d){
+        if(d['pop']>avg){
+            return yScale(+d['pop'])-14;
+        }
+        else{
+            return yScale(+d['pop'])+22
+        }
+    });
+
+
     d3.select('#avgLine_Seoul')
         .transition()
         .attr('y1',yScale(avg))
@@ -362,9 +386,6 @@ function update_linechart_total(data){
             .text('Avg: '+ parseFloat(Math.round(avg/(divider/10))/10)+'K')
             .attr('y',yScale(avg)-6);
     }
-    console.log(pastSelect);
-
-
 }
 
 

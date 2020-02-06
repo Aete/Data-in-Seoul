@@ -116,7 +116,10 @@ function click_bubble() {
 
             if (d3.select(this).attr('class').includes('clicked')){
                 d3.select('.clicked').classed('clicked', false);
+                d3.select('#neighborhood').select('svg').style('display','none');
             } else{
+                d3.select('#neighborhood').select('svg').style('display','block');
+                d3.selectAll('.timeLabel'+pastSelect).style('display','block');
                 d3.select('.clicked').classed('clicked', false);
                 d3.select(this).classed('clicked', true);
                 d3.select(this).attr('fill', 'White');
