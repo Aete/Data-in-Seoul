@@ -2,7 +2,7 @@
 The repository is for processing open data of Seoul in a more user-friendly. In addition, I will upload jupyter notebook files which contain data visualization examples.<br /><br />
 Now, I am working regarding poluation (living and census) and mobility (bus, subway, taxi and etc.).
 
-## Part 1. Mobility (-`ing)
+## Part 0. Population (-`ing)
 
 In this part, I will organize living population data in Seoul by neighborhood and month. 
 
