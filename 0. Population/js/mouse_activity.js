@@ -171,7 +171,7 @@ let dragTime = d3.drag()
 
                 pastSelect = time;
             }
-            update_radius(store.living_pop,simulation,time,monthSetting);
+            update_radius(store.living_pop,simulation,time,monthSetting,popSetting);
         }});
 
 let dragMonth = d3.drag()
@@ -182,7 +182,7 @@ let dragMonth = d3.drag()
             xPosition = monthScaler(month);
             d3.select(this).attr("cx", xPosition);
             monthSetting = month_object[month];
-            update_radius(store.living_pop,simulation,timeSetting,monthSetting);
+            update_radius(store.living_pop,simulation,timeSetting,monthSetting,popSetting);
 
             if(target_data!==undefined){
                 update_linechart(target_data);

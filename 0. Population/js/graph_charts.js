@@ -89,8 +89,8 @@ function scalers(maxValue,minValue){
         'divider':divider,
         'xScale':xScale,
         'yScale':yScale
-
     };
+
     return result;
 }
 

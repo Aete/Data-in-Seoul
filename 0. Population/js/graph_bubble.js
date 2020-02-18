@@ -2,6 +2,7 @@ let store = {};
 
 let timeSetting='avg';
 let monthSetting = 'avg';
+let popSetting = 'living';
 
 let colormode = 'Monochrome';
 const simulationDurationInMs = 10000;
@@ -38,7 +39,7 @@ let regionCategories = [
 
 function load_data_living_pop(){
     return Promise.all([
-        d3.csv('living_population/living_pop_neighborhood.csv')
+        d3.csv('pop.csv')
     ]).then(dataset =>{
         store.living_pop = dataset[0];
         return store
@@ -98,7 +99,9 @@ function get_simulator(width,height){
     let simulation = d3.forceSimulation()
         .force('collision', d3.forceCollide().radius(function (d) {
                 return d.Radius +2
-            }))
+            }).strength(0.8))
+        .force("xAxis",d3.forceX(d=>d.lng).strength(0.4))
+        .force("yAxis",d3.forceY(d=>d.lat).strength(0.4))
         .force('charge', d3.forceManyBody().strength(0.2))
         .force('center',d3.forceCenter(width / 2, height / 2));
     simulation.alphaDecay(0.01);
@@ -167,15 +170,20 @@ function cScale(gu_code){
 
 
 
-function update_radius(data,simulation,time,month){
+function update_radius(data,simulation,time,month,pop_type){
     timeSetting = time;
     let target_ = 'total_'+month+'_'+time;
     let node = d3.select('#container').selectAll('.nodes');
     let nodes = data.map(d=>{
-                        d.Radius = d[target_]/3400;
-                        d.target_time = time;
-                        return d
-                    });
+        if(pop_type ==='living'){
+            console.log(target_);
+            d.Radius = d[target_]/3400;
+            d.target_time = time;
+            return d}
+        else{
+            d.Radius = d['2019.1/4']/3400;
+            return d}
+        });
     node.data(nodes);
     let startTime = Date.now();
     let endTime = startTime + simulationDurationInMs;
@@ -211,6 +219,10 @@ function create_legend(){
         .attr('x',20)
         .attr('y',9)
         .style('font-size','13px');
+}
+
+function distance(a,b){
+    return Math.sqrt((a['lng'] - b['lng']) ** 2 + (a['lat'] - b['lat']) **2);
 }
 
 load_data_living_pop().then(draw_bubble);

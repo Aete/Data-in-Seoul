@@ -82,9 +82,13 @@ function createButtons() {
             let poptype = d3.select(this).select('text').text();
             if(poptype==='Living Population'){
                 d3.select(this).select('text').text('Census Population');
+                popSetting = 'census';
+                update_radius(store.living_pop,simulation,timeSetting,monthSetting,popSetting);
             }
             else{
                 d3.select(this).select('text').text('Living Population');
+                popSetting = 'living';
+                update_radius(store.living_pop,simulation,timeSetting,monthSetting,popSetting);
             }
         });
 
@@ -194,7 +198,7 @@ function empty_buttons() {
 
 function bubbleMode(){
     mode = 'bubble';
-    update_radius(store.living_pop, simulation, timeSetting,monthSetting);
+    update_radius(store.living_pop, simulation, timeSetting,monthSetting,popSetting);
 }
 
 function mapMode(){
