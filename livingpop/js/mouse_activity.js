@@ -48,7 +48,7 @@ function hover_circle(){
 
 
             tooltip.append('text')
-                .text(d['adm_cd2'])
+                .text(d['dong'])
                 .attr('fill','#212121')
                 .attr('x',5)
                 .attr('y',18)
@@ -120,6 +120,7 @@ function click_bubble() {
             if (d3.select(this).attr('class').includes('clicked')){
                 d3.select('.clicked').classed('clicked', false);
                 d3.select('#neighborhood').select('svg').style('display','none');
+                d3.select('#neighborhood_name').text(`Neighborhood: ---`);
             } else{
                 d3.select('#neighborhood').select('svg').style('display','block');
                 d3.selectAll('.timeLabel'+pastSelect).style('display','block');
@@ -133,9 +134,11 @@ function click_bubble() {
                 d3.select('#neighborhood_name').text();
                 if(first_click===true){
                 timeSeriesNeighborhood(target_data);
+                d3.select('#neighborhood_name').text(`Neighborhood: ${target_data.dong}`);
                 first_click=false;
                 }
                 else{
+                    d3.select('#neighborhood_name').text(`Neighborhood: ${target_data.dong}`);
                     update_linechart(target_data);
                 }
             }
