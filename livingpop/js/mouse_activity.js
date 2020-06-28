@@ -2,7 +2,8 @@ let target_data;
 let first_click = true;
 function hover_circle(){
     d3.selectAll(".nodes")
-        .on('mouseover',function(d,i){
+        .on('mouseover',function(d){
+            if(popSetting==='living'){
             d3.select(this).attr('fill','White');
             d3.select(this).attr('stroke','#212121');
             d3.select(this).attr('stroke-width','2px');
@@ -15,7 +16,7 @@ function hover_circle(){
             let yCenter = +d3.select(this).attr('cy');
             let xLoc;
             let yLoc;
-            let rad =  +d.Radius;
+            let rad =  +d.radius;
 
             if(xCenter>300&&yCenter>300){
                 xLoc = xCenter-rad-130;
@@ -87,7 +88,9 @@ function hover_circle(){
                 .attr('fill','#212121')
                 .attr('x',5)
                 .attr('y',91);
-        });
+        } else{
+
+    }});
 
     d3.selectAll(".nodes")
         .on('mouseout',function(d,i){
@@ -127,7 +130,7 @@ function click_bubble() {
                 d3.select(this).attr('stroke-width', '2px');
                 let id = d3.select(this).attr('id');
                 target_data= store.living_pop.filter(d=>d.adm_cd2===id)[0];
-                console.log(target_data);
+                d3.select('#neighborhood_name').text();
                 if(first_click===true){
                 timeSeriesNeighborhood(target_data);
                 first_click=false;
@@ -139,7 +142,7 @@ function click_bubble() {
         });
 }
 
-let dragTime = d3.drag()
+const dragTime = d3.drag()
     .on('drag', function() {
         let xPosition = d3.event.x;
         if(xPosition>=15 && xPosition<610){
@@ -174,7 +177,7 @@ let dragTime = d3.drag()
             update_radius(store.living_pop,simulation,time,monthSetting,popSetting);
         }});
 
-let dragMonth = d3.drag()
+const dragMonth = d3.drag()
     .on('drag', function() {
         let xPosition = d3.event.x;
         if(xPosition>=15 && xPosition<610){
@@ -190,3 +193,10 @@ let dragMonth = d3.drag()
             let monthly_total = store.total.data.filter(d=>d['type']==='total' & d['month']===monthSetting);
             update_linechart_total(monthly_total);
         }});
+
+
+function selectPopType(source){
+    popSetting = source.value;
+    console.log(popSetting);
+    update_radius(store.living_pop,simulation,timeSetting,monthSetting,popSetting);
+}

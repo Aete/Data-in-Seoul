@@ -1,18 +1,19 @@
-let store = {};
+const store = {};
 
 let timeSetting='avg';
 let monthSetting = 'avg';
 let popSetting = 'living';
 
-let colormode = 'Monochrome';
+let colormode = 'Region Color';
 const simulationDurationInMs = 10000;
 
 let body = d3.select('#bubble');
 let width = 650;
-let height = 600;
+let height = 500;
 let simulation = get_simulator(width,height);
 let projection = get_projection(width,height);
 let mode = 'bubble';
+let rScale;
 
 let regionCategories = [
     {'id':0,
@@ -49,9 +50,12 @@ function load_data_living_pop(){
 // this is a main function which draw bubbles
 function draw_bubble() {
     // set the container svg, width and height
+
+    let valueMax = d3.max(store.living_pop.map(d=>+d['total_'+monthSetting+'_'+timeSetting]));
+    rScale= d3.scaleSqrt().domain([0,valueMax]).range([0,15]);
     let living_pop = store.living_pop.map(d=>{
-        d.Radius = d['total_'+monthSetting+'_'+timeSetting]/3400;
         d.target_time='avg';
+        d.radius = rScale(+d['total_'+monthSetting+'_'+timeSetting]);
         return d
     });
 
@@ -83,8 +87,8 @@ function draw_bubble() {
     click_bubble();
 
     // Set start time and end time for animation (updating bubbles location)
-    let startTime = Date.now();
-    let endTime = startTime + simulationDurationInMs;
+    const startTime = Date.now();
+    const endTime = startTime + simulationDurationInMs;
 
     // Update bubbles location using d3.force
     simulation.nodes(living_pop).on('tick', function(){
@@ -98,7 +102,7 @@ function draw_bubble() {
 function get_simulator(width,height){
     let simulation = d3.forceSimulation()
         .force('collision', d3.forceCollide().radius(function (d) {
-                return d.Radius +2
+                return d.radius +2
             }).strength(0.8))
         .force("xAxis",d3.forceX(d=>d.lng).strength(0.4))
         .force("yAxis",d3.forceY(d=>d.lat).strength(0.4))
@@ -121,10 +125,12 @@ function create_circle(data) {
         .selectAll('g')
         .data(data)
         .enter()
+        .append('g')
+        .attr('transform', 'translate(0,30)')
         .append('circle')
         .attr('class',d=>'nodes '+d.gu)
-        .attr('r',d=>+d.Radius)
-        .attr('fill','#212121')
+        .attr('r',d=>d.radius)
+        .attr('fill',d=>cScale(d.gu))
         .attr('fill-opacity','0.8')
         .attr('cx',d=>+d.x)
         .attr('cy',d=>+d.y)
@@ -132,21 +138,15 @@ function create_circle(data) {
 }
 
 function update_circle(endTime,simulation){
-    if(mode==='bubble'){
-        if(Date.now() < endTime) {
-            d3.selectAll('.nodes')
-                .attr('cx', d=>d.x)
-                .attr('cy',d=>d.y)
-                .attr('r',d=>d.Radius);
+    if(Date.now() < endTime) {
+        d3.selectAll('.nodes')
+            .attr('cx', d=>d.x)
+            .attr('cy',d=>d.y)
+            .attr('r',d=>d.radius);
 
-        }
-        else{
-            simulation.stop()
-        }
     }
     else{
-        d3.selectAll('.nodes')
-            .attr('r',d=>d.Radius);
+        simulation.stop()
     }
 }
 
@@ -176,12 +176,11 @@ function update_radius(data,simulation,time,month,pop_type){
     let node = d3.select('#container').selectAll('.nodes');
     let nodes = data.map(d=>{
         if(pop_type ==='living'){
-            console.log(target_);
-            d.Radius = d[target_]/3400;
+            d.radius = rScale(d[target_]);
             d.target_time = time;
             return d}
         else{
-            d.Radius = d['2019.1/4']/3400;
+            d.radius = rScale(d['2019.1/4']);
             return d}
         });
     node.data(nodes);
@@ -200,7 +199,6 @@ function create_legend(){
     let legend = d3.select('#bubble>svg')
                     .append('g')
                     .attr('id','legend')
-                    .style('display','none')
                     .selectAll('g')
                     .data(regionCategories)
                     .enter()
@@ -219,10 +217,6 @@ function create_legend(){
         .attr('x',20)
         .attr('y',9)
         .style('font-size','13px');
-}
-
-function distance(a,b){
-    return Math.sqrt((a['lng'] - b['lng']) ** 2 + (a['lat'] - b['lat']) **2);
 }
 
 load_data_living_pop().then(draw_bubble);

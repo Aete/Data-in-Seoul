@@ -344,10 +344,5 @@ function createMonthSelector(){
         .attr('fill','#848484');
 }
 
-
-
-
-createButtons();
-empty_buttons();
 createMonthSelector();
 createTimeSlider();

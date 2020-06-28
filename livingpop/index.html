@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bubble Diagram about Seoul's population</title>
+    <link href="css/main.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato&amp;display=swap" rel="stylesheet">
+    <script src="js/libraries/d3.min.js"></script>
+</head>
+<body>
+<header style="">
+    <h1> Seoul Living Population Dasahboard</h1>
+    <div class="header__row">
+        <div class="header__column">
+            <h4>Population: </h4>
+            <select onchange="selectPopType(this)" value="living">
+                <option value="living">
+                    Living Population
+                </option>
+                <option value="census">
+                    Census Population
+                </option>
+            </select>
+        </div>
+        <div class="header__column">
+            <div class="header__column">
+                <h4>Month: </h4>
+                <div id="month"></div>
+            </div>
+        </div>
+    </div>
+    <div class="header__row">
+        <div class="header__column">
+            <h4>Color: </h4>
+            <select>
+                <option value="region">
+                    Region
+                </option>
+                <option>
+                    Placeholder
+                </option>
+            </select>
+        </div>
+        <div class="header__column">
+            <h4>Hour:</h4>
+            <div id="time"></div>
+        </div>
+    </div>
+</header>
+<main>
+    <section id="bubble">
+
+    </section>
+    <section id='charts'>
+        <div id="seoul">
+            <h4>Seoul </h4>
+        </div>
+        <div id="neighborhood">
+            <h4 id="neighborhood_name">Neighborhood: </h4>
+        </div>
+    </section>
+</main>
+</body>
+<script src='js/mouse_activity.js'></script>
+<script src='js/control.js'></script>
+<script src='js/graph_bubble.js'></script>
+<script src='js/graph_charts.js'></script>
+
+</html>

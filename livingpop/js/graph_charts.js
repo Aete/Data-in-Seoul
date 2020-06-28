@@ -1,4 +1,4 @@
-let chart_height = 230;
+let chart_height = 200;
 let chart_width = 360;
 let time_range = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
 
@@ -82,7 +82,7 @@ function scalers(maxValue,minValue){
     }
 
     const xScale =  d3.scaleLinear().domain([0,23]).range([20,300]);
-    const yScale =  d3.scaleLinear().domain([minValue,maxValue]).range([chart_height-30,30]);
+    const yScale =  d3.scaleLinear().domain([minValue,maxValue]).range([chart_height,0]);
 
     const result = {'maxValue':maxValue,
         'minValue':minValue,
@@ -330,7 +330,6 @@ function update_linechart(data) {
 
 function update_linechart_total(data){
     const avg = data.pop()['pop'];
-    console.log(avg);
     const xScale = store.total.xScale;
     const yScale = store.total.yScale;
     const divider = store.total.divider;
