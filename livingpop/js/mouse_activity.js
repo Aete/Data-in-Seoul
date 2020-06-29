@@ -3,12 +3,12 @@ let first_click = true;
 function hover_circle(){
     d3.selectAll(".nodes")
         .on('mouseover',function(d){
-            if(popSetting==='living'){
             d3.select(this).attr('fill','White');
             d3.select(this).attr('stroke','#212121');
             d3.select(this).attr('stroke-width','2px');
 
             let total_population = d['total_'+monthSetting+'_'+timeSetting];
+            let census_population = d['2019.3/4'];
             let male_ratio = Math.round((d['male_'+monthSetting+'_'+timeSetting] / total_population)*10000)/100;
             let female_ratio =  Math.round((d['female_'+monthSetting+'_'+timeSetting] / total_population)*10000)/100;
 
@@ -42,7 +42,7 @@ function hover_circle(){
 
             tooltip.append('rect')
                 .attr('width',130)
-                .attr('height',100)
+                .attr('height',118)
                 .attr('fill','rgba(255,255,255,0.95)')
                 .attr('stroke','#212121');
 
@@ -72,25 +72,29 @@ function hover_circle(){
             }
 
             tooltip.append('text')
-                .text('Total: ' + Math.round(total_population).toLocaleString())
+                .text('Living: ' + Math.round(total_population).toLocaleString())
                 .attr('fill','#212121')
                 .attr('x',5)
                 .attr('y',55);
 
             tooltip.append('text')
+                    .text('Census: ' + Math.round(census_population).toLocaleString())
+                    .attr('fill','#212121')
+                    .attr('x',5)
+                    .attr('y',73);
+
+            tooltip.append('text')
                 .text('Female: '+female_ratio+'%')
                 .attr('fill','#212121')
                 .attr('x',5)
-                .attr('y',73);
+                .attr('y',91);
 
             tooltip.append('text')
                 .text('Male: '+male_ratio+'%')
                 .attr('fill','#212121')
                 .attr('x',5)
-                .attr('y',91);
-        } else{
-
-    }});
+                .attr('y',109);
+        });
 
     d3.selectAll(".nodes")
         .on('mouseout',function(d,i){

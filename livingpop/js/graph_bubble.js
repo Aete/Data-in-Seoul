@@ -180,7 +180,7 @@ function update_radius(data,simulation,time,month,pop_type){
             d.target_time = time;
             return d}
         else{
-            d.radius = rScale(d['2019.1/4']);
+            d.radius = rScale(d['2019.3/4']);
             return d}
         });
     node.data(nodes);
